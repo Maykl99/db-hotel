@@ -2,21 +2,52 @@
 
     1. Seleziona tutti gli ospiti che sono stati identificati con la carta di identità.
 
-    SELECT * 
+    SELECT *                         
     FROM `ospiti` 
-    WHERE `document_type`= 'CI'
+    WHERE `document_type`= 'CI';
+
+    SELECT * 
+    FROM `ospiti`   
+    WHERE `document_type` LIKE 'CI';
+
+    SELECT *                                        //-> Operatore di disuguaglianza in questo caso può funzionare dato che esistono solo due tipi di valori;
+    FROM `ospiti` 
+    WHERE `document_type` <> 'Driver License';
+
 
     2. Seleziona tutti gli ospiti che sono nati dopo il 1988
 
     SELECT * 
     FROM `ospiti` 
-    WHERE `date_of_birth`>'1988'
+    WHERE `date_of_birth`>'1988';
+
+    SELECT * 
+    FROM `ospiti` 
+    WHERE 
+    DATE(`date_of_birth`) > '1988';
+
+    SELECT * 
+    FROM `ospiti` 
+    WHERE 
+    YEAR(`date_of_birth`) > '1988';
+
 
     3. Seleziona tutti gli ospiti che hanno più di 20 anni
 
     SELECT * 
     FROM `ospiti`
-    WHERE `date_of_birth` < '2000' ! da rivedere
+    WHERE `date_of_birth` < '2000';              //-> calcolo approssimativo;
+
+    SELECT * 
+    FROM `ospiti` 
+    WHERE 
+    TIMESTAMPDIFF ( YEAR , `date_of_birth` , CURDATE()) > '20';
+
+    SELECT `date_of_birth` 
+    FROM `ospiti` 
+    WHERE 
+    TIMESTAMPDIFF ( YEAR , `date_of_birth` , CURDATE()) > '20';
+
 
     4. Seleziona tutti gli ospiti il cui nome inizia con la D
 
@@ -25,24 +56,32 @@
     WHERE `name` 
     LIKE 'd%'
 
+
     5.Calcolare il totale degli ospiti paganti
 
-    SELECT SUM( `id`) 
+    SELECT COUNT(*)
+    AS 'pagamenti_totali'
     FROM `paganti`
+    WHERE `ospite_id` IS NOT NULL;
 
     6.Qual è il prezzo massimo pagato?
 
     SELECT MAX(`price`) 
-    FROM `pagamenti`
+    FROM `pagamenti`;
+
+    SELECT MAX(`price`) 
+    FROM `pagamenti` 
+    WHERE `status` = 'accepted';
+
 
     7.Seleziona gli ospiti riconosciuti con patente e nati nel 1975
 
     SELECT * 
     FROM `ospiti` 
     WHERE `document_type` = 'Driver License' 
-    AND YEAR(`date_of_birth`) = '1975'
+    AND YEAR(`date_of_birth`) = '1975';
     
     8. Quanti posti letto ha l’hotel in totale?
 
-    SELECT SUM(`beds`) FROM `stanze`
+    SELECT SUM(`beds`) FROM `stanze`;
     

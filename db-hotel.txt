@@ -16,7 +16,7 @@
 
     SELECT * 
     FROM `ospiti`
-     WHERE `date_of_birth` < '2000'
+    WHERE `date_of_birth` < '2000' ! da rivedere
 
     4. Seleziona tutti gli ospiti il cui nome inizia con la D
 

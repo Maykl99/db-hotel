@@ -101,22 +101,33 @@
 
     1. Conta gli ospiti raggruppandoli per anno di nascita
 
-    SELECT * FROM `ospiti` ORDER BY `date_of_birth`
+    SELECT * 
+    FROM `ospiti` 
+    ORDER BY `date_of_birth`;
 
     2. Somma i prezzi dei pagamenti raggruppandoli per status
 
-    SELECT SUM(`price`) , `status` FROM `pagamenti` GROUP BY `status`
+    SELECT 
+    SUM(`price`) , `status` 
+    FROM `pagamenti` 
+    GROUP BY `status`;
 
     3. Conta quante volte è stata prenotata ogni stanza
 
-    SELECT COUNT(`stanza_id`) FROM `prenotazioni` GROUP BY `stanza_id`
+    SELECT 
+    COUNT(`stanza_id`) 
+    FROM `prenotazioni` 
+    GROUP BY `stanza_id`;
 
     4.  Stampare tutti gli ospiti per ogni prenotazione
 
-    SELECT ospiti.name, ospiti.lastname         ! da rivedere
-    FROM `ospiti`
-    INNER JOIN `prenotazioni_has_ospiti`
+    SELECT prenotazioni.id, ospiti.name, ospiti.lastname  
+    FROM prenotazioni 
+    INNER JOIN `prenotazioni_has_ospiti` 
+    ON prenotazioni_has_ospiti.prenotazione_id = prenotazioni.id 
+    INNER JOIN `ospiti` 
     ON ospiti.id = prenotazioni_has_ospiti.ospite_id 
+    ORDER BY prenotazioni.id;
 
 
     5. Stampare Nome, Cognome, Prezzo e Pagante per tutte le prenotazioni fatte a Maggio 2018

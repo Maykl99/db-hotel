@@ -101,14 +101,37 @@
 
     1. Conta gli ospiti raggruppandoli per anno di nascita
 
-    SELECT * 
-    FROM `ospiti` 
+    SELECT COUNT(`id`), `date_of_birth` 
+    FROM ospiti 
+    GROUP BY `date_of_birth`;
+
+    SELECT CONCAT(COUNT(`id`), ' ',`date_of_birth`) 
+    AS 'Ospiti per anno di nascita' 
+    FROM ospiti
+    GROUP BY `date_of_birth`;
+
+    SELECT COUNT(`id`) 
+    AS 'ospiti', `date_of_birth` 
+    AS 'Data_di_nascita' 
+    FROM ospiti 
+    GROUP BY `date_of_birth`;
+
+    SELECT CONCAT(ospiti.id,' ',ospiti.name,' ',ospiti.lastname,' ', ospiti.date_of_birth) 
+    AS 'Info clienti' 
+    FROM ospiti 
     ORDER BY `date_of_birth`;
 
     2. Somma i prezzi dei pagamenti raggruppandoli per status
 
     SELECT 
     SUM(`price`) , `status` 
+    FROM `pagamenti` 
+    GROUP BY `status`;
+
+    SELECT 
+    SUM(pagamenti.price) 
+    AS 'Somma_pagamenti', pagamenti.status 
+    AS 'stato_del_pagamento' 
     FROM `pagamenti` 
     GROUP BY `status`;
 
@@ -129,20 +152,24 @@
     ON ospiti.id = prenotazioni_has_ospiti.ospite_id 
     ORDER BY prenotazioni.id;
 
+    SELECT ospiti.name,ospiti.lastname,prenotazioni.id 
+    FROM `prenotazioni` 
+    JOIN prenotazioni_has_ospiti 
+    ON prenotazioni.id=prenotazioni_has_ospiti.prenotazione_id 
+    JOIN ospiti 
+    ON prenotazioni_has_ospiti.ospite_id=ospiti.id 
+    GROUP BY prenotazioni.id,ospiti.name,ospiti.lastname
+
 
     5. Stampare Nome, Cognome, Prezzo e Pagante per tutte le prenotazioni fatte a Maggio 2018
 
-    SELECT ospiti.name, ospiti.lastname, prenotazioni.created_at, pagamenti.price, paganti.name, paganti.lastname
-    FROM `prenotazioni_has_ospiti`
-    INNER JOIN `ospiti`
-    ON ospiti.id = prenotazioni_has_ospiti.ospite_id
-    INNER JOIN `prenotazioni`
-    ON prenotazioni.id = prenotazioni_has_ospiti.prenotazione_id
+    SELECT CONCAT(paganti.name,' ',paganti.lastname,' ',pagamenti.price) 
+    AS 'Dati_pagante_mese_di_maggio_2018' 
+    FROM `paganti`
     INNER JOIN `pagamenti`
-    ON pagamenti.prenotazione_id = prenotazioni.id
-    INNER JOIN `paganti`
     ON paganti.id = pagamenti.pagante_id 
-    WHERE MONTH(prenotazioni.created_at) = 5 AND YEAR(prenotazioni.created_at) = '2018';
+    WHERE MONTH(paganti.created_at) = '05' 
+    AND YEAR(paganti.created_at) = '2018';
 
     6. Fai la somma di tutti i prezzi delle prenotazioni per le stanze del primo piano
 
@@ -153,9 +180,30 @@
     INNER JOIN `stanze`
     ON stanze.id = prenotazioni.stanza_id WHERE stanze.floor = '1';
 
+    SELECT SUM(pagamenti.price),stanze.floor
+    FROM `pagamenti` 
+    JOIN `prenotazioni`
+    ON pagamenti.prenotazione_id = prenotazioni.id 
+    JOIN `stanze`
+    ON prenotazioni.stanza_id= stanze.id WHERE stanze.floor = 1;
+
     7. Prendi i dati di fatturazione per la prenotazione con id=7
 
     SELECT * 
+    FROM `pagamenti` 
+    INNER JOIN `paganti`
+    ON paganti.id = pagamenti.pagante_id
+    INNER JOIN `prenotazioni`
+    ON prenotazioni.id = pagamenti.prenotazione_id
+    WHERE prenotazioni.id = '7';
+
+
+    SELECT CONCAT(pagamenti.id, ' ',pagamenti.status,' ',pagamenti.price,'$',' ',pagamenti.prenotazione_id,' ',pagamenti.created_at) 
+    AS 'dati_generali', 
+    CONCAT(paganti.name,' ',paganti.lastname,' ',paganti.address) 
+    AS 'dati_personali', 
+    CONCAT(prenotazioni.stanza_id,' ',prenotazioni.configurazione_id) 
+    AS 'id_stanza_id_configurazione'
     FROM `pagamenti` 
     INNER JOIN `paganti`
     ON paganti.id = pagamenti.pagante_id

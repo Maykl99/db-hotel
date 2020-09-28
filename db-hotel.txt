@@ -224,8 +224,12 @@
     
     1. Fai un'analisi per vedere se ci sono ore in cui le prenotazioni sono più frequenti.
 
-        SELECT HOUR(prenotazioni.created_at) 
-        FROM `prenotazioni` WHERE prenotazioni
+        SELECT COUNT(HOUR(prenotazioni.created_at)) 
+        AS 'Numero_frequenza_prenotazioni',
+        HOUR(prenotazioni.created_at) 
+        AS 'Ora'
+        FROM `prenotazioni` 
+        GROUP BY HOUR(prenotazioni.created_at);
 
     2. Le stanze sono state tutte prenotate almeno una volta? (Visualizzare le stanze non ancora prenotate)
 

@@ -101,7 +101,7 @@
 
     1. Conta gli ospiti raggruppandoli per anno di nascita
 
-    SELECT COUNT(`id`), `date_of_birth` 
+    SELECT COUNT(`id`), YEAR(`date_of_birth` )
     FROM ospiti 
     GROUP BY `date_of_birth`;
 
@@ -171,9 +171,17 @@
     WHERE MONTH(paganti.created_at) = '05' 
     AND YEAR(paganti.created_at) = '2018';
 
+    SELECT ospiti.name, ospiti.lastname, pagamenti.price, paganti.name as 'Nome_Pagante', prenotazioni.created_at as 'Data Prenotazione'
+    FROM ospiti
+    INNER JOIN paganti on ospiti.id = paganti.ospite_id
+    INNER JOIN pagamenti on pagamenti.pagante_id = paganti.id
+    INNER JOIN prenotazioni on prenotazioni.id = pagamenti.prenotazione_id
+    WHERE YEAR(prenotazioni.created_at) = '2018' and MONTH(prenotazioni.created_at) = '05';
+
+
     6. Fai la somma di tutti i prezzi delle prenotazioni per le stanze del primo piano
 
-    SELECT SUM(`price`) , stanze.floor
+    SELECT SUM(`price`) , stanze.floor  AS 'Piano'
     FROM `pagamenti`
     INNER JOIN `prenotazioni` 
     ON prenotazioni.id = pagamenti.prenotazione_id
@@ -210,3 +218,28 @@
     INNER JOIN `prenotazioni`
     ON prenotazioni.id = pagamenti.prenotazione_id
     WHERE prenotazioni.id = '7';
+
+
+
+    
+    1. Fai un'analisi per vedere se ci sono ore in cui le prenotazioni sono più frequenti.
+
+        SELECT HOUR(prenotazioni.created_at) 
+        FROM `prenotazioni` WHERE prenotazioni
+
+    2. Le stanze sono state tutte prenotate almeno una volta? (Visualizzare le stanze non ancora prenotate)
+
+        SELECT prenotazioni.stanza_id, stanze.id
+        FROM `prenotazioni` 
+        RIGHT JOIN `stanze`
+        ON prenotazioni.stanza_id = stanze.id 
+        WHERE prenotazioni.stanza_id IS NULL;
+
+    3. Come si chiamano gli ospiti che hanno fatto più di due prenotazioni?
+
+        SELECT prenotazioni_has_ospiti.ospite_id, ospiti.name, ospiti.lastname 
+        FROM `prenotazioni_has_ospiti` 
+        INNER JOIN `ospiti`
+        ON prenotazioni_has_ospiti.ospite_id = ospiti.id 
+        GROUP BY prenotazioni_has_ospiti.ospite_id 
+        HAVING COUNT(prenotazioni_has_ospiti.ospite_id) > 2;
